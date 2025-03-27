@@ -1,0 +1,39 @@
+rules:
+  - id: CN_ID_CARD
+    name: Chinese ID Card Number
+    description: Matches 18-digit Chinese Resident ID Card numbers
+    pattern: '[1-9]\d{5}(18|19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{3}[0-9Xx]'
+
+  - id: CN_MOBILE
+    name: Chinese Mobile Number
+    description: Matches Chinese mobile phone numbers
+    pattern: '1[3-9]\d{9}'
+
+  - id: BANK_CARD
+    name: Bank Card Number
+    description: Matches 13-19 digit bank card numbers
+    pattern: '\b\d{13,19}\b'
+
+  - id: EMAIL
+    name: Email Address
+    description: Matches email addresses
+    pattern: '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+
+  - id: IPV4
+    name: IPv4 Address
+    description: Matches IPv4 addresses
+    pattern: '\b(?:\d{1,3}\.){3}\d{1,3}\b'
+
+  - id: PASSWORD
+    name: Password Related
+    description: Matches common password-related keywords
+    keywords:
+      - password
+      - 密码
+      - pwd
+      - passwd
+
+  - id: API_KEY
+    name: API Keys and Tokens
+    description: Matches common API key and token patterns
+    pattern: '(?i)(api[_-]?key|access[_-]?token|secret[_-]?key)[:=]\s*[''"]([^''\"]+)[''\"]'
