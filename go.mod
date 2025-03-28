@@ -1,5 +1,5 @@
-module SensitiveDetect
+module github.com/itxiaohu001/censorgo
 
 go 1.23.4
 
-require gopkg.in/yaml.v3 v3.0.1 // indirect
+require gopkg.in/yaml.v3 v3.0.1

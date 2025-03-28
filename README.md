@@ -1,4 +1,4 @@
-# SensitiveDetect
+# censorgo
 
 一个高性能的敏感信息检测库，支持自定义规则和并发处理。
 
@@ -18,7 +18,7 @@
 ```go
 func main() {
     // 使用默认配置创建检测器
-    detector, err := SensitiveDetect.NewDetector(nil)
+    detector, err := censorgo.NewDetector(nil)
     if err != nil {
         panic(err)
     }
@@ -40,7 +40,7 @@ func main() {
 ### 自定义配置
 
 ```go
-config := &SensitiveDetect.Config{
+config := &censorgo.Config{
     Concurrency: 8,           // 设置并发数
     MaxTextSize: 2 * 1024 * 1024, // 设置最大文本大小为2MB
     StrictMode: true,         // 启用严格模式
@@ -73,7 +73,7 @@ rules:
 ### 加载规则文件
 
 ```go
-err := SensitiveDetect.LoadRulesFromFile("rules.yaml")
+err := censorgo.LoadRulesFromFile("rules.yaml")
 if err != nil {
     panic(err)
 }

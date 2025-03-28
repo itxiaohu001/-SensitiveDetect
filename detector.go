@@ -1,5 +1,4 @@
-// Package SensitiveDetect provides functionality for detecting sensitive information in text.
-package SensitiveDetect
+package censorgo
 
 import (
 	"fmt"
@@ -22,16 +21,16 @@ type Rule struct {
 	Name        string         // Human readable name
 	Description string         // Rule description
 	Pattern     *regexp.Regexp // Compiled regular expression pattern
-	Keywords    []string      // List of keywords to match
+	Keywords    []string       // List of keywords to match
 }
 
 // Config holds configuration options for the detector
 type Config struct {
-	Rules        []Rule  // List of detection rules
-	Logger       Logger  // Custom logger implementation
-	Concurrency  int     // Number of concurrent workers for processing
-	MaxTextSize  int     // Maximum text size to process (in bytes)
-	StrictMode   bool    // If true, returns error on any rule match
+	Rules       []Rule // List of detection rules
+	Logger      Logger // Custom logger implementation
+	Concurrency int    // Number of concurrent workers for processing
+	MaxTextSize int    // Maximum text size to process (in bytes)
+	StrictMode  bool   // If true, returns error on any rule match
 }
 
 // DefaultConfig returns a Config with sensible default values
@@ -58,11 +57,11 @@ type Match struct {
 
 // Various error types that may be returned
 var (
-	ErrInvalidPattern   = fmt.Errorf("invalid pattern")
-	ErrInvalidInput     = fmt.Errorf("invalid input")
-	ErrInputTooLarge    = fmt.Errorf("input exceeds maximum size")
-	ErrRuleNotFound     = fmt.Errorf("rule not found")
-	ErrDetectionFailed  = fmt.Errorf("detection failed")
+	ErrInvalidPattern  = fmt.Errorf("invalid pattern")
+	ErrInvalidInput    = fmt.Errorf("invalid input")
+	ErrInputTooLarge   = fmt.Errorf("input exceeds maximum size")
+	ErrRuleNotFound    = fmt.Errorf("rule not found")
+	ErrDetectionFailed = fmt.Errorf("detection failed")
 )
 
 // NewDetector creates a new Detector with the given configuration

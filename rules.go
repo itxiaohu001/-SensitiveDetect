@@ -1,4 +1,4 @@
-package SensitiveDetect
+package censorgo
 
 import (
 	"fmt"
