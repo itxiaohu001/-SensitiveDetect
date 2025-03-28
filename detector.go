@@ -1,6 +1,7 @@
 package censorgo
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"regexp"
@@ -42,6 +43,7 @@ type Match struct {
 	Rule     Rule   // The rule that triggered the match
 	Content  string // The matched content
 	Position int    // Position in the input where match was found
+	Line     int    // Line number where match was found
 }
 
 // Various error types that may be returned
@@ -53,10 +55,18 @@ var (
 	ErrDetectionFailed = fmt.Errorf("detection failed")
 )
 
-// NewDetector creates a new Detector with the given configuration
-func NewDetector(config *Config) (*Detector, error) {
+// Option represents a function that modifies Config
+type Option func(*Config)
+
+// NewDetector creates a new Detector with the given configuration and options
+func NewDetector(config *Config, opts ...Option) (*Detector, error) {
 	if config == nil {
 		config = DefaultConfig()
+	}
+
+	// Apply options
+	for _, opt := range opts {
+		opt(config)
 	}
 
 	// Validate configuration
@@ -103,7 +113,7 @@ func (d *Detector) DetectString(input string) ([]Match, error) {
 
 		// Check keywords
 		for _, keyword := range rule.Keywords {
-			if idx := indexOf(input, keyword); idx >= 0 {
+			for _, idx := range indexOf(input, keyword) {
 				matches = append(matches, Match{
 					Rule:     rule,
 					Content:  keyword,
@@ -120,37 +130,36 @@ func (d *Detector) DetectString(input string) ([]Match, error) {
 	return matches, nil
 }
 
-// ScanReader processes an io.Reader in chunks for sensitive information
+// ScanReader processes an io.Reader for sensitive information
 func (d *Detector) ScanReader(reader io.Reader) ([]Match, error) {
-	var matches []Match
-	buffer := make([]byte, 32*1024) // 32KB chunks
+	// Read entire content
+	content, err := io.ReadAll(reader)
+	if err != nil {
+		return nil, err
+	}
 
-	for {
-		n, err := reader.Read(buffer)
-		if n > 0 {
-			chunkMatches, err := d.DetectString(string(buffer[:n]))
-			if err != nil && err != ErrDetectionFailed {
-				return nil, err
-			}
-			matches = append(matches, chunkMatches...)
-		}
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return nil, err
-		}
+	// Get matches from content
+	matches, err := d.DetectString(string(content))
+	if err != nil && err != ErrDetectionFailed {
+		return nil, err
+	}
+
+	// Calculate line numbers for matches
+	for i := range matches {
+		lineNum := 1 + bytes.Count(content[:matches[i].Position], []byte{'\n'})
+		matches[i].Line = lineNum
 	}
 
 	return matches, nil
 }
 
-// Helper function to find index of a substring
-func indexOf(s, substr string) int {
+// Helper function to find all indices of a substring
+func indexOf(s, substr string) []int {
+	var indices []int
 	for i := 0; i <= len(s)-len(substr); i++ {
 		if s[i:i+len(substr)] == substr {
-			return i
+			indices = append(indices, i)
 		}
 	}
-	return -1
+	return indices
 }
