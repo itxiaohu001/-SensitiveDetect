@@ -20,7 +20,6 @@ type Rule struct {
 type Config struct {
 	Rules       []Rule // List of detection rules
 	Concurrency int    // Number of concurrent workers for processing
-	MaxTextSize int    // Maximum text size to process (in bytes)
 	StrictMode  bool   // If true, returns error on any rule match
 }
 
@@ -28,7 +27,6 @@ type Config struct {
 func DefaultConfig() *Config {
 	return &Config{
 		Concurrency: 4,
-		MaxTextSize: 1024 * 1024, // 1MB
 		StrictMode:  false,
 	}
 }
@@ -86,10 +84,6 @@ func (d *Detector) AddRule(rule Rule) error {
 
 // DetectString checks the input string for sensitive information
 func (d *Detector) DetectString(input string) ([]Match, error) {
-	if len(input) > d.config.MaxTextSize {
-		return nil, ErrInputTooLarge
-	}
-
 	var matches []Match
 	d.mu.RLock()
 	defer d.mu.RUnlock()
