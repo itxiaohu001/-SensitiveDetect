@@ -7,14 +7,6 @@ import (
 	"sync"
 )
 
-// Logger interface allows users to inject their own logging implementation
-type Logger interface {
-	Debug(args ...interface{})
-	Info(args ...interface{})
-	Warn(args ...interface{})
-	Error(args ...interface{})
-}
-
 // Rule represents a single detection rule
 type Rule struct {
 	ID          string         // Unique identifier for the rule
@@ -27,7 +19,6 @@ type Rule struct {
 // Config holds configuration options for the detector
 type Config struct {
 	Rules       []Rule // List of detection rules
-	Logger      Logger // Custom logger implementation
 	Concurrency int    // Number of concurrent workers for processing
 	MaxTextSize int    // Maximum text size to process (in bytes)
 	StrictMode  bool   // If true, returns error on any rule match
